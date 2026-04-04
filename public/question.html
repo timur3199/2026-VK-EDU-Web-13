@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Как правильно использовать prefetch_related и select_related — AskMe</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23E84855'/><text x='16' y='23' font-family='Arial' font-weight='bold' font-size='20' fill='white' text-anchor='middle'>?</text></svg>" />
+  <link rel="stylesheet" href="static/css/reset.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="static/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="container">
+      <div class="header-inner">
+        <a href="index.html" class="site-logo">Ask<span>Me</span></a>
+        <div class="header-search">
+          <div class="input-group">
+            <input type="text" placeholder="Поиск по вопросам…" aria-label="Поиск" />
+            <button type="button" aria-label="Найти">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 15.803a7.5 7.5 0 0010.607 0z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="header-actions">
+          <a href="ask.html" class="btn-ask">+ Задать вопрос</a>
+          <div class="auth-links">
+            <a href="login.html">Войти</a>
+            <span class="sep">|</span>
+            <a href="signup.html">Регистрация</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="site-main">
+    <div class="container">
+      <div class="content-wrap">
+
+        <div class="main-col">
+
+          <article class="question-full-card">
+            <div class="q-meta mb-3">
+              <div class="d-flex align-items-center gap-2 flex-wrap">
+                <div class="q-avatar-placeholder">МК</div>
+                <div>
+                  <a href="#" class="fw-semibold" style="color:var(--text-primary);font-size:.875rem;">maria_k</a>
+                  <span class="text-muted ms-2" style="font-size:.8rem;">12 минут назад</span>
+                </div>
+              </div>
+            </div>
+
+            <h1 class="q-title-full">Как правильно использовать prefetch_related и select_related в Django ORM?</h1>
+
+            <div class="question-body">
+              <p>Столкнулся с классической проблемой N+1 запросов при работе с Django ORM. Пробовал использовать <code>select_related</code>, но он не работает для полей <code>ManyToManyField</code>.</p>
+              <p>Вот мой код:</p>
+              <pre style="background:var(--bg-body);border:1px solid var(--border);border-radius:8px;padding:14px;font-size:.85rem;overflow-x:auto;"><code>questions = Question.objects.all()
+for q in questions:
+    print(q.author.username)   # N+1 здесь
+    print(q.tags.all())         # и здесь</code></pre>
+              <p>Как правильно оптимизировать этот код? Когда использовать <code>prefetch_related</code>, а когда <code>select_related</code>? Есть ли разница в количестве SQL-запросов?</p>
+            </div>
+
+            <div class="d-flex align-items-center gap-2 flex-wrap mb-3">
+              <a href="tag.html" class="tag-badge">django</a>
+              <a href="tag.html" class="tag-badge">python</a>
+              <a href="tag.html" class="tag-badge">orm</a>
+              <a href="tag.html" class="tag-badge">optimization</a>
+            </div>
+
+            <!-- Footer -->
+            <div class="d-flex align-items-center gap-3 flex-wrap pt-3" style="border-top:1px solid var(--border);">
+              <div class="like-widget" data-state="none">
+                <button class="like-btn" data-action="like" title="Лайк">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/>
+                  </svg>
+                  <span>За</span>
+                </button>
+                <span class="like-count">24</span>
+                <button class="like-btn" data-action="dislike" title="Дизлайк">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                  <span>Против</span>
+                </button>
+              </div>
+              <span class="answers-count">7 ответов</span>
+            </div>
+          </article>
+
+          <div class="section-label">7 ответов</div>
+
+          <article class="answer-card correct">
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <div class="q-avatar-placeholder">ИС</div>
+              <div>
+                <a href="#" class="fw-semibold" style="color:var(--text-primary);font-size:.875rem;">ivan_s</a>
+                <span class="text-muted ms-2" style="font-size:.8rem;">8 минут назад</span>
+              </div>
+            </div>
+
+            <div class="answer-body">
+              <p><strong>Краткое правило:</strong></p>
+              <ul>
+                <li><code>select_related</code> — для ForeignKey и OneToOne (JOIN в одном SQL-запросе)</li>
+                <li><code>prefetch_related</code> — для ManyToMany и обратных ForeignKey (отдельный SQL + Python join)</li>
+              </ul>
+              <p>Оптимизированный код:</p>
+              <pre style="background:var(--bg-body);border:1px solid var(--border);border-radius:8px;padding:14px;font-size:.85rem;overflow-x:auto;"><code>questions = Question.objects.select_related('author').prefetch_related('tags')</code></pre>
+              <p>Теперь Django сделает 2 запроса вместо 2N+1. <code>select_related</code> подтянет авторов через JOIN, а <code>prefetch_related</code> — теги отдельным запросом с <code>WHERE id IN (...)</code>.</p>
+            </div>
+
+            <div class="d-flex align-items-center gap-3 flex-wrap pt-3" style="border-top:1px solid var(--border);">
+              <div class="like-widget" data-state="liked">
+                <button class="like-btn liked" data-action="like" title="Лайк">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/>
+                  </svg>
+                  <span>За</span>
+                </button>
+                <span class="like-count">15</span>
+                <button class="like-btn" data-action="dislike" title="Дизлайк">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                  <span>Против</span>
+                </button>
+              </div>
+              <button class="correct-btn active">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                  <path fill-rule="evenodd" d="M20.707 5.293a1 1 0 010 1.414l-11 11a1 1 0 01-1.414 0l-5-5a1 1 0 011.414-1.414L9 15.586l10.293-10.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+                Правильный ✓
+              </button>
+            </div>
+          </article>
+
+          <article class="answer-card">
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <div class="q-avatar-placeholder">ДВ</div>
+              <div>
+                <a href="#" class="fw-semibold" style="color:var(--text-primary);font-size:.875rem;">dmitry_v</a>
+                <span class="text-muted ms-2" style="font-size:.8rem;">5 минут назад</span>
+              </div>
+            </div>
+
+            <div class="answer-body">
+              <p>Добавлю про <code>Prefetch</code> объект — он даёт больше контроля. Например, можно отфильтровать prefetch или задать order:</p>
+              <pre style="background:var(--bg-body);border:1px solid var(--border);border-radius:8px;padding:14px;font-size:.85rem;overflow-x:auto;"><code>from django.db.models import Prefetch
+
+questions = Question.objects.prefetch_related(
+    Prefetch('answers', queryset=Answer.objects.order_by('-created_at'))
+)</code></pre>
+              <p>Используйте <code>django-debug-toolbar</code> чтобы видеть реальное количество запросов.</p>
+            </div>
+
+            <div class="d-flex align-items-center gap-3 flex-wrap pt-3" style="border-top:1px solid var(--border);">
+              <div class="like-widget" data-state="none">
+                <button class="like-btn" data-action="like" title="Лайк">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/>
+                  </svg>
+                  <span>За</span>
+                </button>
+                <span class="like-count">6</span>
+                <button class="like-btn" data-action="dislike" title="Дизлайк">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                  <span>Против</span>
+                </button>
+              </div>
+              <button class="correct-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                </svg>
+                Правильный
+              </button>
+            </div>
+          </article>
+
+          <article class="answer-card">
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <div class="q-avatar-placeholder">НО</div>
+              <div>
+                <a href="#" class="fw-semibold" style="color:var(--text-primary);font-size:.875rem;">natasha_o</a>
+                <span class="text-muted ms-2" style="font-size:.8rem;">2 минуты назад</span>
+              </div>
+            </div>
+
+            <div class="answer-body">
+              <p>Ещё один момент: <code>select_related</code> тоже можно использовать с глубокой вложенностью через двойное подчёркивание:</p>
+              <pre style="background:var(--bg-body);border:1px solid var(--border);border-radius:8px;padding:14px;font-size:.85rem;overflow-x:auto;"><code>Question.objects.select_related('author__profile')</code></pre>
+              <p>Будет JOIN сразу трёх таблиц в одном запросе.</p>
+            </div>
+
+            <div class="d-flex align-items-center gap-3 flex-wrap pt-3" style="border-top:1px solid var(--border);">
+              <div class="like-widget" data-state="none">
+                <button class="like-btn" data-action="like" title="Лайк">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/>
+                  </svg>
+                  <span>За</span>
+                </button>
+                <span class="like-count">3</span>
+                <button class="like-btn" data-action="dislike" title="Дизлайк">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                  <span>Против</span>
+                </button>
+              </div>
+              <button class="correct-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                </svg>
+                Правильный
+              </button>
+            </div>
+          </article>
+
+          <nav class="pagination-wrap" aria-label="Пагинация ответов">
+            <ul class="pagination justify-content-center mb-0">
+              <li class="page-item disabled">
+                <span class="page-link">&#8592;</span>
+              </li>
+              <li class="page-item active" aria-current="page">
+                <span class="page-link">1</span>
+              </li>
+              <li class="page-item"><a class="page-link" href="#">2</a></li>
+              <li class="page-item"><a class="page-link" href="#">3</a></li>
+              <li class="page-item">
+                <a class="page-link" href="#">&#8594;</a>
+              </li>
+            </ul>
+          </nav>
+
+          <div class="answer-form-section">
+            <h3>Ваш ответ</h3>
+            <form novalidate>
+              <div class="mb-3">
+                <label class="form-label" for="answerText">Текст ответа</label>
+                <textarea id="answerText" class="form-control" rows="6"
+                  placeholder="Напишите развёрнутый ответ…" maxlength="10000" required></textarea>
+                <div class="form-text">Минимум 20 символов. Поддерживается Markdown. Максимум 10 000 символов.</div>
+                <div class="invalid-feedback">Ответ должен содержать минимум 20 символов.</div>
+              </div>
+              <button type="submit" class="btn-primary-brand" style="width:auto;padding:10px 32px;">
+                Отправить ответ
+              </button>
+            </form>
+          </div>
+
+        </div>
+
+        <aside class="sidebar-col">
+          <div class="sidebar-widget">
+            <div class="widget-title">Популярные теги</div>
+            <div class="tag-cloud">
+              <a href="tag.html" class="tag-pill">python</a>
+              <a href="tag.html" class="tag-pill">javascript</a>
+              <a href="tag.html" class="tag-pill">django</a>
+              <a href="tag.html" class="tag-pill">react</a>
+              <a href="tag.html" class="tag-pill">postgresql</a>
+              <a href="tag.html" class="tag-pill">docker</a>
+              <a href="tag.html" class="tag-pill">api</a>
+              <a href="tag.html" class="tag-pill">sql</a>
+              <a href="tag.html" class="tag-pill">css</a>
+              <a href="tag.html" class="tag-pill">linux</a>
+            </div>
+          </div>
+          <div class="sidebar-widget">
+            <div class="widget-title">Лучшие участники</div>
+            <div class="members-list">
+              <div class="member-item">
+                <div class="member-avatar">АП</div>
+                <span class="member-name">aleksey_p</span>
+                <span class="member-score">+842</span>
+              </div>
+              <div class="member-item">
+                <div class="member-avatar">МК</div>
+                <span class="member-name">maria_k</span>
+                <span class="member-score">+719</span>
+              </div>
+              <div class="member-item">
+                <div class="member-avatar">ИС</div>
+                <span class="member-name">ivan_s</span>
+                <span class="member-score">+634</span>
+              </div>
+              <div class="member-item">
+                <div class="member-avatar">ДВ</div>
+                <span class="member-name">dmitry_v</span>
+                <span class="member-score">+571</span>
+              </div>
+              <div class="member-item">
+                <div class="member-avatar">НО</div>
+                <span class="member-name">natasha_o</span>
+                <span class="member-score">+498</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <span>© 2026 <strong>AskMe</strong> — платформа вопросов и ответов</span>
+      <div class="d-flex gap-3">
+        <a href="#">О проекте</a>
+        <a href="#">Правила</a>
+        <a href="#">Контакты</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="static/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{% load static %}
+<aside class="sidebar-col">
+  <div class="sidebar-widget">
+    <div class="widget-title">Популярные теги</div>
+    <div class="tag-cloud">
+      {% for tag in tags %}
+        <a href="{% url 'tag' tag %}" class="tag-pill">{{ tag }}</a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+    <div class="widget-title">Лучшие участники</div>
+    <div class="members-list">
+      {% for member in members %}
+        <div class="member-item">
+          <div class="member-avatar">{{ member.initials }}</div>
+          <span class="member-name">{{ member.name }}</span>
+          <span class="member-score">+{{ member.score }}</span>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</aside>
