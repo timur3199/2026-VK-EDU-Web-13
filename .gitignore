@@ -1,64 +1,25 @@
-# ─── OS / IDE ───────────────────────────────────────────────
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-Thumbs.db
-ehthumbs.db
-desktop.ini
+# Virtual environment
+venv/
+.venv/
 
-.idea/
-.vscode/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# ─── Python ─────────────────────────────────────────────────
+# Python
 __pycache__/
-*.py[cod]
-*$py.class
+*.pyc
 *.pyo
 *.pyd
-
-# Virtual environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
+*.py[cod]
 
 # Django
-*.log
-*.pot
-*.sqlite3
-local_settings.py
 db.sqlite3
-db.sqlite3-journal
+*.sqlite3
 media/
+staticfiles/
 
-# ─── Node / JS ──────────────────────────────────────────────
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.npm
-.yarn-integrity
-dist/
-build/
+# Environment variables
+.env
 
-# ─── Сборка / артефакты ─────────────────────────────────────
-*.egg-info/
-.eggs/
-dist/
-build/
-*.egg
-MANIFEST
-.pytest_cache/
-.coverage
-htmlcov/
-.tox/
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+*.swp

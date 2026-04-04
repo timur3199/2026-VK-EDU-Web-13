@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Тег: {{ tag_name }}{% endblock %}
+{% block main %}
+<div class="content-wrap">
+  <div class="main-col">
+    <div class="tag-page-header">
+      <span class="tag-page-badge">{{ tag_name }}</span>
+      <span class="text-muted">Вопросы с тегом «{{ tag_name }}»</span>
+    </div>
+    {% for question in page_obj %}
+      {% include 'includes/question_card.html' %}
+    {% endfor %}
+    {% include 'includes/pagination.html' %}
+  </div>
+  {% include 'includes/sidebar.html' %}
+</div>
+{% endblock %}
