@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Лучшие вопросы{% endblock %}
+{% block main %}
+<div class="content-wrap">
+  <div class="main-col">
+    <div class="page-header">
+      <h1>Вопросы</h1>
+      <div class="page-tabs">
+        <a href="{% url 'index' %}" class="page-tab">Новые</a>
+        <a href="{% url 'hot' %}" class="page-tab active">Лучшие</a>
+      </div>
+    </div>
+    {% for question in page_obj %}
+      {% include 'includes/question_card.html' %}
+    {% empty %}
+      <div class="text-center py-5 text-muted">
+        <p>Пока нет популярных вопросов.</p>
+      </div>
+    {% endfor %}
+    {% include 'includes/pagination.html' %}
+  </div>
+  {% include 'includes/sidebar.html' %}
+</div>
+{% endblock %}
