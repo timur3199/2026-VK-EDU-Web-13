@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ question.title }}{% endblock %}
+{% block main %}
+<div class="content-wrap">
+  <div class="main-col">
+
+    <div class="question-full-card">
+      <h1 class="q-title-full">{{ question.title }}</h1>
+      <div class="q-meta mb-3">
+        <a href="#">{{ question.author.username }}</a> &nbsp;·&nbsp; {{ question.created_at|timesince }} назад
+        {% for t in question.tags.all %}
+          <a href="{% url 'tag' t.name %}" class="tag-badge ms-1">{{ t.name }}</a>
+        {% endfor %}
+      </div>
+      <div class="question-body">{{ question.text }}</div>
+      <div class="like-widget d-inline-flex">
+        <button class="like-btn">▲</button>
+        <span class="like-count">{{ question.likes_count }}</span>
+        <button class="like-btn">▼</button>
+      </div>
+    </div>
+
+    <div class="section-label">
+      {% if page_obj.paginator.count %}
+        {{ page_obj.paginator.count }} ответов
+      {% else %}
+        Пока нет ни одного ответа к этому вопросу
+      {% endif %}
+    </div>
+
+    {% for answer in page_obj %}
+    <div class="answer-card {% if answer.is_correct %}correct{% endif %}">
+      <div class="q-meta mb-2">
+        <strong>{{ answer.author.username }}</strong> &nbsp;·&nbsp; {{ answer.created_at|timesince }} назад
+        {% if answer.is_correct %}<span class="ms-2 text-success fw-bold">✓ Лучший ответ</span>{% endif %}
+      </div>
+      <div class="answer-body">{{ answer.text }}</div>
+      <div class="like-widget d-inline-flex">
+        <button class="like-btn">▲</button>
+        <span class="like-count">{{ answer.likes_count }}</span>
+        <button class="like-btn">▼</button>
+      </div>
+    </div>
+    {% empty %}
+    <div class="text-center py-5 text-muted">
+      <p>Пока нет ни одного ответа к этому вопросу.</p>
+      <p>Будьте первым!</p>
+    </div>
+    {% endfor %}
+
+    {% include 'includes/pagination.html' %}
+
+    <div class="answer-form-section">
+      <h3>Ваш ответ</h3>
+      <textarea class="form-control mb-3" rows="6" placeholder="Напишите ваш ответ…"></textarea>
+      <button class="btn-primary-brand" style="width:auto;padding:10px 28px;">Отправить ответ</button>
+    </div>
+  </div>
+  {% include 'includes/sidebar.html' %}
+</div>
+{% endblock %}
