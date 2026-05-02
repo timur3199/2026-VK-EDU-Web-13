@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Задать вопрос{% endblock %}
+{% block main %}
+<div class="ask-page">
+  <div class="ask-card">
+    <div class="form-title">Задать вопрос</div>
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      <div class="mb-4">
+        <label class="form-label">{{ form.title.label }}</label>
+        {{ form.title }}
+        {% if form.title.errors %}
+          <div class="form-error">{{ form.title.errors.0 }}</div>
+        {% endif %}
+        <div class="form-text">Будьте конкретны — хороший заголовок привлечёт больше ответов.</div>
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label">{{ form.text.label }}</label>
+        {{ form.text }}
+        {% if form.text.errors %}
+          <div class="form-error">{{ form.text.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label">{{ form.tags.label }}</label>
+        {{ form.tags }}
+        {% if form.tags.errors %}
+          <div class="form-error">{{ form.tags.errors.0 }}</div>
+        {% endif %}
+        <div class="form-text">{{ form.tags.help_text }}</div>
+      </div>
+
+      <button type="submit" class="btn-primary-brand">Опубликовать вопрос</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

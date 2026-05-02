@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Профиль{% endblock %}
+{% block main %}
+<div class="profile-page">
+  <div class="profile-card" style="max-width:680px;margin:0 auto;">
+    <div class="form-title mb-4">Редактирование профиля</div>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-success">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+
+      <div class="mb-3">
+        <label class="form-label">{{ form.username.label }}</label>
+        {{ form.username }}
+        {% if form.username.errors %}<div class="form-error">{{ form.username.errors.0 }}</div>{% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">{{ form.email.label }}</label>
+        {{ form.email }}
+        {% if form.email.errors %}<div class="form-error">{{ form.email.errors.0 }}</div>{% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">{{ form.first_name.label }}</label>
+        {{ form.first_name }}
+        {% if form.first_name.errors %}<div class="form-error">{{ form.first_name.errors.0 }}</div>{% endif %}
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label">{{ form.avatar.label }}</label>
+        {% if request.user.profile.avatar %}
+          <div class="mb-2"><img src="{{ request.user.profile.avatar.url }}" style="width:60px;height:60px;border-radius:50%;object-fit:cover;" /></div>
+        {% endif %}
+        {{ form.avatar }}
+      </div>
+
+      <button type="submit" class="btn-primary-brand" style="width:auto;padding:10px 32px;">Сохранить изменения</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
