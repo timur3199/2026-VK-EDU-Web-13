@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ question.title }}{% endblock %}
+{% block main %}
+<div class="content-wrap">
+  <div class="main-col">
+
+    <!-- Question -->
+    <div class="question-full-card">
+      <h1 class="q-title-full">{{ question.title }}</h1>
+      <div class="q-meta mb-3">
+        <a href="#">{{ question.author.username }}</a> &nbsp;·&nbsp; {{ question.created_at|timesince }} назад
+        {% for t in question.tags.all %}
+          <a href="{% url 'tag' t.name %}" class="tag-badge ms-1">{{ t.name }}</a>
+        {% endfor %}
+      </div>
+      <div class="question-body mb-3">{{ question.text }}</div>
+
+      {% if request.user.is_authenticated %}
+        <div class="like-widget d-inline-flex" data-type="question" data-id="{{ question.id }}">
+          <button class="like-btn like-up {% if question.id in liked_question_ids %}active{% endif %}" title="Лайк">▲</button>
+          <span class="like-count">{{ question.likes_count }}</span>
+          <button class="like-btn like-down" title="Дизлайк" disabled>▼</button>
+        </div>
+      {% else %}
+        <div class="like-widget d-inline-flex">
+          <button class="like-btn" disabled title="Войдите, чтобы поставить оценку">▲</button>
+          <span class="like-count">{{ question.likes_count }}</span>
+          <button class="like-btn" disabled title="Войдите, чтобы поставить оценку">▼</button>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Answers count -->
+    <div class="section-label">
+      {% if page_obj.paginator.count %}
+        {{ page_obj.paginator.count }} ответов
+      {% else %}
+        Пока нет ни одного ответа к этому вопросу
+      {% endif %}
+    </div>
+
+    <!-- Answers list -->
+    {% for answer in page_obj %}
+    <div class="answer-card {% if answer.is_correct %}correct{% endif %}" id="answer-{{ answer.id }}">
+      <div class="q-meta mb-2">
+        <strong>{{ answer.author.username }}</strong> &nbsp;·&nbsp; {{ answer.created_at|timesince }} назад
+        <span class="correct-badge ms-2 {% if not answer.is_correct %}d-none{% endif %}" id="badge-{{ answer.id }}">
+          ✓ Лучший ответ
+        </span>
+      </div>
+      <div class="answer-body mb-2">{{ answer.text }}</div>
+
+      <div class="d-flex align-items-center gap-3 flex-wrap">
+        {% if request.user.is_authenticated %}
+          <div class="like-widget d-inline-flex" data-type="answer" data-id="{{ answer.id }}">
+            <button class="like-btn like-up {% if answer.id in liked_answer_ids %}active{% endif %}" title="Лайк">▲</button>
+            <span class="like-count">{{ answer.likes_count }}</span>
+            <button class="like-btn like-down" title="Дизлайк" disabled>▼</button>
+          </div>
+        {% else %}
+          <div class="like-widget d-inline-flex">
+            <button class="like-btn" disabled title="Войдите, чтобы поставить оценку">▲</button>
+            <span class="like-count">{{ answer.likes_count }}</span>
+            <button class="like-btn" disabled title="Дизлайк">▼</button>
+          </div>
+        {% endif %}
+
+        {% if request.user == question.author %}
+          <button class="correct-btn {% if answer.is_correct %}active{% endif %}"
+                  data-answer-id="{{ answer.id }}"
+                  title="{% if answer.is_correct %}Снять отметку{% else %}Отметить как правильный{% endif %}">
+            ✓ {% if answer.is_correct %}Правильный ответ{% else %}Отметить как правильный{% endif %}
+          </button>
+        {% endif %}
+      </div>
+    </div>
+    {% empty %}
+    <div class="text-center py-5 text-muted">
+      <p>Пока нет ни одного ответа к этому вопросу.</p>
+      <p>Будьте первым!</p>
+    </div>
+    {% endfor %}
+
+    {% include 'includes/pagination.html' %}
+
+    <!-- Answer form -->
+    <div class="answer-form-section">
+      <h3>Ваш ответ</h3>
+      {% if request.user.is_authenticated %}
+        <form method="post">
+          {% csrf_token %}
+          {% if answer_form.text.errors %}
+            <div class="alert alert-danger">{{ answer_form.text.errors }}</div>
+          {% endif %}
+          {{ answer_form.text }}
+          <button type="submit" class="btn-primary-brand mt-3" style="width:auto;padding:10px 28px;">
+            Отправить ответ
+          </button>
+        </form>
+      {% else %}
+        <div class="text-muted">
+          <a href="{% url 'login' %}?next={{ request.path }}">Войдите</a>, чтобы оставить ответ.
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+  {% include 'includes/sidebar.html' %}
+</div>
+
+<script>
+const CSRF_TOKEN = '{{ csrf_token }}';
+const QUESTION_ID = {{ question.id }};
+const IS_AUTH = {{ request.user.is_authenticated|yesno:"true,false" }};
+const LOGIN_URL = '{% url "login" %}?next={{ request.path }}';
+</script>
+<script src="{% static 'js/likes.js' %}"></script>
+{% endblock %}
