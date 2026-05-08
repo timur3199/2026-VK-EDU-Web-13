@@ -14,7 +14,7 @@ TECH_TAGS = [
     'html', 'node', 'fastapi', 'flask', 'celery', 'async', 'orm', 'jwt',
     'testing', 'ci', 'devops', 'aws', 'security', 'performance', 'websocket',
     'microservices', 'architecture', 'algorithms', 'data-structures', 'regex',
-    'json', 'xml', 'http', 'oauth', 'jwt', 'cors', 'crud', 'mvc', 'solid',
+    'json', 'xml', 'http', 'oauth', 'cors', 'crud', 'mvc', 'solid',
 ]
 
 
@@ -28,41 +28,46 @@ class Command(BaseCommand):
         ratio = options['ratio']
         self.stdout.write(f'Заполнение БД с ratio={ratio}...')
 
-        num_users = ratio
-        num_questions = ratio * 10
-        num_answers = ratio * 100
-        num_tags = min(ratio, len(TECH_TAGS))
-        num_likes = ratio * 200
+        users = self.fill_users(ratio)
+        tags = self.fill_tags(ratio)
+        questions = self.fill_questions(ratio, users, tags)
+        answers = self.fill_answers(ratio, users, questions)
+        self.fill_likes(ratio, users, questions, answers)
 
-        # Users & Profiles
+        self.stdout.write(self.style.SUCCESS(
+            f'Готово! {len(users)} пользователей, {len(questions)} вопросов, '
+            f'{len(answers)} ответов, {len(tags)} тегов'
+        ))
+
+    def fill_users(self, ratio):
         self.stdout.write('Создание пользователей...')
-        users_to_create = []
-        for i in range(num_users):
-            username = fake_en.user_name() + str(random.randint(100, 9999))
-            users_to_create.append(User(
-                username=username[:150],
+        users_to_create = [
+            User(
+                username=(fake_en.user_name() + str(random.randint(100, 9999)))[:150],
                 email=fake_en.email(),
                 first_name=fake_ru.first_name(),
                 last_name=fake_ru.last_name(),
-            ))
+            )
+            for _ in range(ratio)
+        ]
         User.objects.bulk_create(users_to_create, ignore_conflicts=True)
-        users = list(User.objects.order_by('-id')[:num_users])
-
-        existing_profile_ids = set(Profile.objects.values_list('user_id', flat=True))
+        users = list(User.objects.order_by('-id')[:ratio])
+        existing_ids = set(Profile.objects.values_list('user_id', flat=True))
         Profile.objects.bulk_create(
-            [Profile(user=u) for u in users if u.id not in existing_profile_ids],
+            [Profile(user=u) for u in users if u.id not in existing_ids],
             ignore_conflicts=True
         )
+        return users
 
-        # Tags
+    def fill_tags(self, ratio):
         self.stdout.write('Создание тегов...')
-        tag_names = TECH_TAGS[:num_tags]
+        tag_names = TECH_TAGS[:min(ratio, len(TECH_TAGS))]
         Tag.objects.bulk_create(
             [Tag(name=name) for name in tag_names], ignore_conflicts=True
         )
-        tags = list(Tag.objects.all())
+        return list(Tag.objects.all())
 
-        # Questions
+    def fill_questions(self, ratio, users, tags):
         self.stdout.write('Создание вопросов...')
         questions_to_create = [
             Question(
@@ -72,16 +77,16 @@ class Command(BaseCommand):
                 likes_count=random.randint(0, 100),
                 answers_count=0,
             )
-            for _ in range(num_questions)
+            for _ in range(ratio * 10)
         ]
         Question.objects.bulk_create(questions_to_create)
-        questions = list(Question.objects.order_by('-id')[:num_questions])
-
+        questions = list(Question.objects.order_by('-id')[:ratio * 10])
         self.stdout.write('Добавление тегов к вопросам...')
         for question in questions:
             question.tags.set(random.sample(tags, min(3, len(tags))))
+        return questions
 
-        # Answers
+    def fill_answers(self, ratio, users, questions):
         self.stdout.write('Создание ответов...')
         Answer.objects.bulk_create([
             Answer(
@@ -91,21 +96,21 @@ class Command(BaseCommand):
                 is_correct=random.random() < 0.1,
                 likes_count=random.randint(0, 50),
             )
-            for _ in range(num_answers)
+            for _ in range(ratio * 100)
         ])
-
-        # Update answers_count
+        answers = list(Answer.objects.order_by('-id')[:ratio * 100])
         for q in questions:
             q.answers_count = q.answers.count()
         Question.objects.bulk_update(questions, ['answers_count'])
+        return answers
 
-        # Likes
+    def fill_likes(self, ratio, users, questions, answers):
         self.stdout.write('Создание лайков...')
-        answers = list(Answer.objects.order_by('-id')[:num_answers])
+        target = ratio * 100
 
         q_likes, seen_q = [], set()
-        for _ in range(num_likes * 3):
-            if len(q_likes) >= num_likes // 2:
+        for _ in range(target * 3):
+            if len(q_likes) >= target:
                 break
             key = (random.choice(users).id, random.choice(questions).id)
             if key not in seen_q:
@@ -114,17 +119,11 @@ class Command(BaseCommand):
         QuestionLike.objects.bulk_create(q_likes, ignore_conflicts=True)
 
         a_likes, seen_a = [], set()
-        for _ in range(num_likes * 3):
-            if len(a_likes) >= num_likes // 2:
+        for _ in range(target * 3):
+            if len(a_likes) >= target:
                 break
             key = (random.choice(users).id, random.choice(answers).id)
             if key not in seen_a:
                 seen_a.add(key)
                 a_likes.append(AnswerLike(user_id=key[0], answer_id=key[1]))
         AnswerLike.objects.bulk_create(a_likes, ignore_conflicts=True)
-
-        self.stdout.write(self.style.SUCCESS(
-            f'Готово! {num_users} пользователей, {num_questions} вопросов, '
-            f'{num_answers} ответов, {len(tags)} тегов, '
-            f'{len(q_likes)+len(a_likes)} лайков'
-        ))
