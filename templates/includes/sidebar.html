@@ -1,0 +1,27 @@
+{% load static %}
+<aside class="sidebar-col">
+  <div class="sidebar-widget">
+    <div class="widget-title">Популярные теги</div>
+    <div class="tag-cloud">
+      {% for tag in popular_tags %}
+        <a href="{% url 'tag' tag.name %}" class="tag-pill">{{ tag.name }}</a>
+      {% empty %}
+        <span class="text-muted">Теги не найдены</span>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+    <div class="widget-title">Лучшие участники</div>
+    <div class="members-list">
+      {% for profile in top_members %}
+        <div class="member-item">
+          <div class="member-avatar">{{ profile.get_initials }}</div>
+          <span class="member-name">{{ profile.user.username }}</span>
+        </div>
+      {% empty %}
+        <span class="text-muted">Пока нет участников</span>
+      {% endfor %}
+    </div>
+  </div>
+</aside>

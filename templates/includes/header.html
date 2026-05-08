@@ -1,0 +1,28 @@
+{% load static %}
+<header class="site-header">
+  <div class="container">
+    <div class="header-inner">
+      <a href="{% url 'index' %}" class="site-logo">Ask<span>Me</span></a>
+
+      <div class="header-search">
+        <div class="input-group">
+          <input type="text" placeholder="Поиск по вопросам…" aria-label="Поиск" />
+          <button type="button" aria-label="Найти">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 15.803a7.5 7.5 0 0010.607 0z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <a href="{% url 'ask' %}" class="btn-ask">+ Задать вопрос</a>
+        <div class="auth-links">
+          <a href="{% url 'login' %}">Войти</a>
+          <span class="sep">|</span>
+          <a href="{% url 'signup' %}">Регистрация</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

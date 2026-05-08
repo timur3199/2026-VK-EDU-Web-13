@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Профиль{% endblock %}
+{% block main %}
+<div class="profile-page">
+  <div class="profile-card" style="max-width:680px;margin:0 auto;">
+    <div class="form-title mb-4">Редактирование профиля</div>
+
+    <div class="mb-4">
+      <label class="form-label">Аватар</label>
+      <div class="avatar-upload-section">
+        <div class="avatar-preview-placeholder">АП</div>
+        <div>
+          <div class="fw-semibold mb-1">Загрузить фото</div>
+          <div class="text-muted" style="font-size:.85rem;">PNG или JPG, не более 2 МБ</div>
+          <input type="file" class="form-control mt-2" accept="image/*" style="max-width:260px;" />
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Логин</label>
+      <input type="text" class="form-control" value="aleksey_p" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Email</label>
+      <input type="email" class="form-control" value="aleksey@example.com" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Новый пароль <span class="text-muted fw-normal">(оставьте пустым, чтобы не менять)</span></label>
+      <input type="password" class="form-control" placeholder="Новый пароль" />
+    </div>
+    <div class="mb-4">
+      <label class="form-label">Повторите новый пароль</label>
+      <input type="password" class="form-control" placeholder="Повторите пароль" />
+    </div>
+    <button class="btn-primary-brand" style="width:auto;padding:10px 32px;">Сохранить изменения</button>
+  </div>
+</div>
+{% endblock %}
